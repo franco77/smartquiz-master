@@ -1,0 +1,9 @@
+.navbar{
+    margin-bottom: auto;
+    background: rgba(0,0,0,0.2);
+    height: 60px;
+}
+
+.navbar-title{
+    font-family: 'Lobster', cursive;
+}

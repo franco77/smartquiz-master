@@ -1,0 +1,13 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+./smartquiz-frontend/node_modules
+./smartquiz-backend/node_modules
+./smartquiz-frontend/.pnp
+./smartquiz-frontend.pnp.js
+
+# testing
+./smartquiz-frontend/coverage
+
+# production
+./smartquiz-frontend/build

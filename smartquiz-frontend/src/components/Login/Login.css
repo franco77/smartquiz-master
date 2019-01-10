@@ -1,0 +1,10 @@
+.preload-images {
+	background: url(../../assets/img/magnet.svg) no-repeat -9999px -9999px;
+    background: url(../../assets/img/logout.png) no-repeat -9999px -9999px,
+        url(../../assets/img/back.png) no-repeat -9999px -9999px,
+        url(../../assets/img/check.svg) no-repeat -9999px -9999px,
+		    url(../../assets/img/cross.svg) no-repeat -9999px -9999px,
+		    url(../../assets/img/fine.png) no-repeat -9999px -9999px,
+		    url(../../assets/img/stats.png) no-repeat -9999px -9999px,
+		    url(../../assets/img/profile.png) no-repeat -9999px -9999px;
+}
