@@ -30,10 +30,11 @@ const initialState = {
     name: 'Rishab Bakshi',
     email: "rishabbakshi@gmail.com",
     points: 0,
-    joined: "",
+    joined_at: "",
     stats: {
-      questions: 0,
-      correct: 0
+      total_attempts: 0,
+      correct_attempts: 0,
+      times_played: 0
     }
   },
   questions: {
@@ -72,8 +73,14 @@ const initialState = {
       },
     ],
     count: {
-      options: [10,15,20],
+      options: [10, 15, 20],
       active: 10
+    }
+  },
+  session: {
+    stats: {
+      questions: 0,
+      correct: 0
     }
   }
 }
@@ -88,7 +95,7 @@ class App extends Component {
   onRouteChange = (route, params) => {
     if (route === "session") {
       if (params.id) {
-        this.setState(Object.assign(this.state.questions.active_category, params));        
+        this.setState(Object.assign(this.state.questions.active_category, params));
         console.log(this.state);
       }
       // this.setState(Object.assign(this.state.music.home, { status: "STOPPED" }))
@@ -104,7 +111,33 @@ class App extends Component {
       // this.setState(Object.assign(this.state.music.session, { status: "STOPPED" }))
       console.log("Changing route to ", route, this.state)
     }
+    else if (route === 'profile') {
+      this.fetchUpdateProfile();
+    }
+
     this.setState({ route: route })
+  }
+
+  fetchUpdateProfile = () => {
+    fetch(global.API_URL + 'profile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify({
+        email: this.state.userProfile.email
+      })
+    })
+      .then(res => res.json())
+      .then(userProfileData => {
+        this.setState(Object.assign(this.state.userProfile.stats,
+          {
+            total_attempts: userProfileData.total_attempts,
+            correct_attempts: userProfileData.correct_attempts,
+            times_played: userProfileData.times_played
+          }))
+      })
+      .catch(err => console.log(err));
   }
 
   updateQuestionCount = (count) => {
@@ -122,28 +155,35 @@ class App extends Component {
 
   backToHome = () => {
     console.log(this.state.userProfile)
-    // PUT the stats data online
-    // fetch('http:localhost:3009/update_stats', {
-    //     method: 'PUT',
-    //     headers: {
-    //         'Content-Type': "application/json"
-    //     },
-    //     body: JSON.stringify({
-    //         id: this.props.appState.userProfile.id,
-    //         stats: {
-    //             questions_attempted: this.props.appState.userProfile.stats.questions_attempted,                    
-    //             correctly_answered: this.props.appState.userProfile.stats.correctly_answered
-    //         }
-    //     })
-    // })
-    // .then(res => res.json())
-    // .then(updatedUserData => {
+    if (this.state.route != 'profile') {
 
-    // })
-    // .catch(err => console.log(err));
+      fetch(global.API_URL + 'updateStats', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': "application/json"
+        },
+        body: JSON.stringify({
+          email: this.state.userProfile.email,
+          total: this.state.session.stats.questions,
+          correct: this.state.session.stats.correct
+        })
+      })
+        .then(res => res.json())
+        .then(updatedUserData => {
+          this.setState(Object.assign(this.state.session,
+            {
+              stats: {
+                questions: 0,
+                correct: 0
+              }
+            })
+          )
+    })
+        .catch(err => console.log(err));
 
+    }
     this.onRouteChange('home')
-}
+  }
 
   render() {
 
@@ -154,7 +194,7 @@ class App extends Component {
         {
           (route === 'home') ?
             <Fragment>
-              <Navbar appState={this.state} onGoingBack={this.backToHome} onRouteChange={this.onRouteChange}/>
+              <Navbar appState={this.state} onGoingBack={this.backToHome} onRouteChange={this.onRouteChange} />
               <Sound
                 url={homeMusic}
                 playStatus="PLAYING"
@@ -171,7 +211,7 @@ class App extends Component {
             </Fragment>
             : (route === 'session') ?
               <Fragment>
-                <Navbar appState={this.state}  onGoingBack={this.backToHome} onRouteChange={this.onRouteChange}/>
+                <Navbar appState={this.state} onGoingBack={this.backToHome} onRouteChange={this.onRouteChange} />
                 <Sound
                   id="sessionMusic"
                   url={sessionMusic}
@@ -182,13 +222,18 @@ class App extends Component {
                   volume={75}
                   onStop={this.onSessionMusicStop}
                 />
-                <Session appState={this.state} onRouteChange={this.onRouteChange} backToHome={this.backToHome}/>
+                <Session appState={this.state} onRouteChange={this.onRouteChange} backToHome={this.backToHome} />
                 <Footer />
               </Fragment>
 
-              : (route === "profile") ? <Profile appState={this.state} onRouteChange={this.onRouteChange} />
-                : (route === "register") ? <Register appState={this.state} onRouteChange={this.onRouteChange} loadUser={this.loadUser}/>
-                  : <Login appState={this.state} onRouteChange={this.onRouteChange}  loadUser={this.loadUser}/>
+              : (route === "profile") ?
+                <Fragment>
+                  <Navbar appState={this.state} onGoingBack={this.backToHome} onRouteChange={this.onRouteChange} />
+                  <Profile appState={this.state} onRouteChange={this.onRouteChange} />
+                  <Footer />
+                </Fragment>
+                : (route === "register") ? <Register appState={this.state} onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
+                  : <Login appState={this.state} onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
         }
       </div>
     );

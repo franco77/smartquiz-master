@@ -3,6 +3,7 @@ import './Login.css';
 import magnet from '../../assets/img/magnet.svg';
 
 import 'tachyons';
+import { RSA_NO_PADDING } from 'constants';
 
 class Login extends Component {
     constructor(props) {
@@ -34,11 +35,16 @@ class Login extends Component {
                 password: loginPassword
             })
         })
-            .then(res => res.json())
+            .then(res => {
+                return res.json()
+            })
             .then(user => {
+                console.log(user);
                 if (user.id) {
                     this.props.loadUser(user)
                     this.props.onRouteChange('home');
+                }else{
+                    alert(user);
                 }
             })
             .catch(err => console.log("ERROR", err))

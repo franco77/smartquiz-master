@@ -1,0 +1,14 @@
+.profile-container{
+    flex-grow: 1;
+}
+
+.profile-image-container{
+    border: solid 0.5px gray;
+    border-radius: 100%;
+    overflow: hidden;
+    width: 200px;
+}
+
+.stats-container{
+    text-align: left;
+}

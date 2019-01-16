@@ -1,12 +1,26 @@
 const handleProfileFetch = (req, res, db) => {
     console.log("[API_LOG]: Profile to fetch: ", req.body);
-    const { id } = req.params;
-    let found = false
-    db.select('*').from('users').where({ id })
+    const { email } = req.body;
+    let completeUserDetail = {};
+    db.select('*').from('users').where({ email })
         .then(user => {
             if (user.length) {
-                console.log("[PROFILE_API_RES]: ",user[0])
-                res.json(user[0])
+                completeUserDetail = user[0];
+                console.log(completeUserDetail)
+
+                db.select('*').from('stats').where({ email })
+                    .then(stats => {
+                        const returningUser = Object.assign(
+                            {
+                                total_attempts: stats[0].total_attempts,
+                                correct_attempts: stats[0].correct_attempts,
+                                times_played: stats[0].times_played
+                            },
+                            completeUserDetail)
+
+                        console.log("[PROFILE_API_RES]: ", returningUser)
+                        res.json(returningUser)
+                    })
             } else {
                 res.status(404).json('User Not found')
             }
@@ -14,21 +28,31 @@ const handleProfileFetch = (req, res, db) => {
         .catch(err => res.status(400).json('Error getting user'))
 }
 
-const incrementImageCount = (req, res, db) => {
-    const { id } = req.body;
-    console.log("[API_LOG]: Increment count for user: ", req.body);
+const updateStats = (req, res, db) => {
+    const { email, correct, total } = req.body;
+    console.log("[API_LOG]: Update Stats for user: ", req.body);
 
-    db('users').where('id', '=', id)
-        .increment('entries', 1)
-        .returning('entries')
-        .then(entries => {
-            console.log("[IMAGE_COUNT_API_RES]: ", entries[0])
-            res.json(entries[0])
+    db('stats').where('email', '=', email)
+        // .select('total_attempts')
+        .update({
+            total_attempts: db.raw(`?? + ${total}`, ['total_attempts']),
+            correct_attempts: db.raw(`?? + ${correct}`, ['correct_attempts'])
         })
-        .catch(err => res.status(400).json("unabe to get entries"))
+        // .select('correct_attempts')
+        // .update({
+        //     correct_attempts: db.raw(`?? + ${correct}`, ['correct_attempts'])
+        // })
+        .increment('times_played')
+        .returning('*')
+        .then(stats => {
+            console.log("[UPDATE_STATS_API_RES]: ", stats)
+            res.json(stats[0])
+        })
+        .catch(err => console.log(err))
+        // .catch(err => res.status(400).json("unabe to get stats"))
 }
 
 module.exports = {
-    handleProfileFetch : handleProfileFetch,
-    incrementImageCount: incrementImageCount
+    handleProfileFetch: handleProfileFetch,
+    updateStats: updateStats
 }

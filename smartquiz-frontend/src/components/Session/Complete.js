@@ -9,8 +9,8 @@ const Complete = ({ appState, onFinishGame }) => {
         <div className="pa3 center flex-column">
             <img src={fineImg} height="90px" width="90px" alt="Session Completed!" />
             <div className="mv4"> Congratulations! You have completed all questions in this section!</div>
-            <div className="f5">Attempted: {appState.userProfile.stats.questions}</div>
-            <div className="f5">Correct: {appState.userProfile.stats.correct}</div>
+            <div className="f5">Attempted: {appState.session.stats.questions}</div>
+            <div className="f5">Correct: {appState.session.stats.correct}</div>
             <div className="pointer dark-gray bg-light-gray ma3 pv3 ph5 grow shadow-5 f4" onClick={onFinishGame}> Back to Home </div>
         </div>
     )

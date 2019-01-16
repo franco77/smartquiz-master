@@ -91,18 +91,18 @@ class Session extends Component {
         const chosenAns = event.target.getAttribute("name")
         console.log("User chose this:", chosenAns, this.props.appState)
 
-        let q = this.props.appState.userProfile.stats.questions;
-        let a = this.props.appState.userProfile.stats.correct;
+        let q = this.props.appState.session.stats.questions;
+        let a = this.props.appState.session.stats.correct;
         if (chosenAns === this.state.current_question.correct_answer) {
             console.log("Well Done, you chose the right answer");
             this.setState({ sessionState: 'correct_answer'})            
-            this.setState(Object.assign(this.props.appState.userProfile.stats, { questions: q + 1, correct: a + 1}))
+            this.setState(Object.assign(this.props.appState.session.stats, { questions: q + 1, correct: a + 1}))
             console.log(this.props.appState);
         } else {
             console.log("You chose the wrong answer. Hard Luck")
             
             this.setState({ sessionState: 'incorrect_answer'})            
-            this.setState(Object.assign(this.props.appState.userProfile.stats, { questions: q + 1, correct: a}))
+            this.setState(Object.assign(this.props.appState.session.stats, { questions: q + 1, correct: a}))
             console.log(this.props.appState);
         }
     }

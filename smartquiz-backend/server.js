@@ -46,7 +46,7 @@ app.post('/login', (req, res) => { login.handleLogin(req, res, db, bcrypt)})
 
 app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt)} )
 
-app.get('/profile/:id', (req, res) => { profile.handleProfileFetch (req, res, db)})
+app.post('/profile', (req, res) => { profile.handleProfileFetch (req, res, db)})
 
-app.put('/imageCount', (req, res) => { profile.incrementImageCount(req, res, db)})
+app.put('/updateStats', (req, res) => { profile.updateStats(req, res, db)})
 
